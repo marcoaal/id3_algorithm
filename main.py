@@ -2,6 +2,21 @@ import id3_version1
 import numpy as np
 from pprint import pprint
 from datetime import datetime
+import copy
+
+def evaluar(arbol_decision,elemento_evaluacion,indice_evaluacion):
+    for k,v in elemento_evaluacion.items():
+        for ke,va in arbol_decision.items():
+                llave = ke.split(" = ")
+                nodo_arbol_decision = llave[0]
+                rama = llave[1]
+                if (nodo_arbol_decision == k and rama == v):
+                    if(va == '+' or va == '-' or va == '???'):
+                        print(str(indice_evaluacion) +" -> " +va)
+                    else:                      
+                        el_ev = elemento_evaluacion.copy()
+                        el_ev.pop(nodo_arbol_decision, None)                        
+                        evaluar(va,el_ev,indice_evaluacion)
 
 def main():
     archivo_entrenamiento = open('entrenamiento_descuentos.csv')
@@ -22,7 +37,7 @@ def main():
     
     for i in range(len(lineas_entrenamiento[0].split(',')) - 1):
         elementos_entrenamiento.append([])
-        print(atributos_evaluacion[i])
+        atributos_evaluacion[i] = atributos_evaluacion[i].strip("\n")
         diccionario_eval[atributos_evaluacion[i]] = []
 
     atributos = lineas_entrenamiento[0].split(',')
@@ -54,9 +69,16 @@ def main():
 
     print("\n------ Evaluación ------\n")    
 
-    print(arbol_decision.keys())
+    #pprint(diccionario_eval)
+    
+    #print(len(diccionario_eval[atributos_evaluacion[0]]))
+    for i in range(len(diccionario_eval[atributos_evaluacion[0]])):
+        elemento_evaluacion = {}
+        for k,v in diccionario_eval.items():
+            elemento_evaluacion[k] = v[i]
+        evaluar(arbol_decision,elemento_evaluacion,i)
 
-    print("Tiempo de finalizado: "+datetime.now().strftime('%H:%M:%S.%f'))
+    print("Tiempo de finalización: "+datetime.now().strftime('%H:%M:%S.%f'))
     
 if __name__ == '__main__':
     main()
