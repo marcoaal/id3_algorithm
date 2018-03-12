@@ -1,0 +1,5 @@
+Numero de Ejemplares,Nivel de Ventas,Precio
+<=4,Buenas,<=150
+>4,Promedio,>150
+>4,Bajas,<=150
+<=4,Bajas,>150
