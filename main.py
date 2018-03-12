@@ -1,22 +1,14 @@
 import id3_version1
+import evaluacion_id3
 import numpy as np
 from pprint import pprint
 from datetime import datetime
-import copy
 
-def evaluar(arbol_decision,elemento_evaluacion,indice_evaluacion):
-    for k,v in elemento_evaluacion.items():
-        for ke,va in arbol_decision.items():
-                llave = ke.split(" = ")
-                nodo_arbol_decision = llave[0]
-                rama = llave[1]
-                if (nodo_arbol_decision == k and rama == v):
-                    if(va == '+' or va == '-' or va == '???'):
-                        print(str(indice_evaluacion) +" -> " +va)
-                    else:                      
-                        el_ev = elemento_evaluacion.copy()
-                        el_ev.pop(nodo_arbol_decision, None)                        
-                        evaluar(va,el_ev,indice_evaluacion)
+'''
+Aprendizaje
+FI,UNAM
+12/03/18
+'''
 
 def main():
     archivo_entrenamiento = open('entrenamiento_descuentos.csv')
@@ -61,24 +53,38 @@ def main():
             diccionario_eval[atributos_evaluacion[indice_atrib]].append(e_v)
             indice_atrib = indice_atrib + 1
 
-    print("Tiempo de inicio: "+datetime.now().strftime('%H:%M:%S.%f'))
+    FMT = '%H:%M:%S.%f'
 
-    print("\n------ Árbol de decisión ------\n")
+    tiempo_inicio = datetime.now().strftime(FMT)
+
+    print("\n----------- ÁRBOL DE DECISIÓN -----------\n")
     arbol_decision = id3_version1.construirArbol(datos_entrenamiento,elementos_meta,atributos)
     pprint(arbol_decision)
 
-    print("\n------ Evaluación ------\n")    
+    tiempo_fin = datetime.now().strftime(FMT)
 
-    #pprint(diccionario_eval)
+    diferencia_tiempo = datetime.strptime(tiempo_fin, FMT) - datetime.strptime(tiempo_inicio, FMT)
+
+    print("\nInicio: "+tiempo_inicio)
+    print("Fin: "+ tiempo_fin)
+    print("Diferencia: "+ str(diferencia_tiempo))
+
+    print("\n\n----------- EVALUACIÓN -----------\n")
     
-    #print(len(diccionario_eval[atributos_evaluacion[0]]))
+    tiempo_inicio = datetime.now().strftime(FMT)
+    
     for i in range(len(diccionario_eval[atributos_evaluacion[0]])):
         elemento_evaluacion = {}
         for k,v in diccionario_eval.items():
             elemento_evaluacion[k] = v[i]
-        evaluar(arbol_decision,elemento_evaluacion,i)
+        evaluacion_id3.evaluar(arbol_decision,elemento_evaluacion,i)
 
-    print("Tiempo de finalización: "+datetime.now().strftime('%H:%M:%S.%f'))
+    tiempo_fin = datetime.now().strftime(FMT)
+    diferencia_tiempo = datetime.strptime(tiempo_fin, FMT) - datetime.strptime(tiempo_inicio, FMT)
+
+    print("\nInicio: "+tiempo_inicio)
+    print("Fin: "+ tiempo_fin)
+    print("Diferencia: "+ str(diferencia_tiempo))
     
 if __name__ == '__main__':
     main()
